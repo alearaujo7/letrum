@@ -105,7 +105,7 @@
 
   .empty-state{padding:60px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-display);font-size:1.15rem;font-style:italic;line-height:1.6;}
   .state-msg{padding:80px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-ui);}
-  .state-msg.error{color:var(--plum-deep);}
+  .state-msg.error{color:var(--ink);}
   .state-msg .btn{margin-top:16px;}
   .spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--plum);border-radius:50%;margin:0 auto 16px;}
 
@@ -239,7 +239,7 @@
 
   var SUPABASE_URL = 'https://esjxazzrxamgaxpwbtai.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_xO0zuYAnTaaPhlzGkXWMYw_fXJbw3Yv';
-  var ARTICLE_SELECT = 'id,title,subtitle,slug,description,content,cover_image_url,read_time_minutes,views_count,status,published_at,author_id,category:categories(id,name,slug),profiles(id,username,full_name,avatar_url),claps(count),comments(id),article_tags(tags(name,slug))';
+  var ARTICLE_SELECT = 'id,title,subtitle,slug,description,content,cover_image_url,read_time_minutes,views_count,status,published_at,author_id,category:categories(id,name,slug),profiles!articles_author_id_fkey(id,username,full_name,avatar_url),claps(count),comments(id),article_tags(tags(name,slug))';
   var PALETTE = ['#7A3B54','#C98A3E','#4B6B58','#3E5C76','#9C3B4B','#5B4B8A','#2F6F6A'];
 
   var session = null;
