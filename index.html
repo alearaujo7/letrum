@@ -75,7 +75,7 @@
 
   .hero{position:relative;padding:56px 0 32px;overflow:hidden;}
   .hero-mark{position:absolute;top:-40px;left:-20px;font-family:var(--font-signature);font-size:14rem;color:var(--ink);opacity:.06;line-height:1;pointer-events:none;user-select:none;}
-  .hero h1{font-family:var(--font-display);font-weight:500;font-style:italic;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.15;max-width:740px;margin:0 0 16px;position:relative;}
+  .hero h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.15;max-width:740px;margin:0 0 16px;position:relative;}
   .hero p.sub{font-family:var(--font-ui);color:var(--ink-soft);font-size:1.02rem;max-width:520px;margin:0 0 22px;position:relative;}
 
   .layout{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:start;}
@@ -115,7 +115,7 @@
   .author-row .count{font-size:.78rem;color:var(--ink-faint);}
   .cta-card{background:linear-gradient(160deg,var(--plum) 0%,var(--plum-deep) 100%);color:#fff;border-radius:var(--radius);padding:26px;}
   .cta-card .brand-mark{color:#fff;opacity:.6;}
-  .cta-card h3{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.25rem;margin:6px 0 10px;}
+  .cta-card h3{font-family:var(--font-display);font-weight:600;font-size:1.25rem;margin:6px 0 10px;}
   .cta-card p{font-size:.86rem;opacity:.85;margin:0 0 18px;line-height:1.5;}
   .cta-card .btn-primary{background:#fff;color:var(--plum-deep);}
   .cta-card .btn-primary:hover{background:var(--paper);}
@@ -154,7 +154,7 @@
   .profile-stats b{color:var(--ink);}
 
   .write-wrap{max-width:680px;margin:0 auto;padding-top:32px;}
-  .write-wrap h1{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.8rem;margin:0 0 6px;}
+  .write-wrap h1{font-family:var(--font-display);font-weight:600;font-size:1.8rem;margin:0 0 6px;}
   .write-wrap .hint{color:var(--ink-faint);font-size:.88rem;margin:0 0 28px;}
   .field{margin-bottom:18px;}
   .field label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px;}
@@ -167,6 +167,28 @@
   .body-textarea{width:100%;min-height:320px;border:1px solid var(--line);border-radius:12px;padding:20px;font-family:var(--font-display);font-size:1.08rem;line-height:1.7;background:var(--paper-raised);color:var(--ink);resize:vertical;}
   .body-textarea:focus{outline:none;border-color:var(--plum);}
   .write-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap;}
+
+  .write-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 22px;border-bottom:1px solid var(--line);margin-bottom:30px;flex-wrap:wrap;}
+  .write-status{font-size:.82rem;color:var(--ink-faint);font-weight:500;}
+  .write-topbar-actions{display:flex;gap:10px;}
+  .editor-body{display:flex;gap:14px;align-items:flex-start;}
+  .editor-plus{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--paper-raised);color:var(--ink-soft);font-size:1.3rem;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:10px;padding:0;}
+  .editor-plus:hover{border-color:var(--ink);color:var(--ink);}
+  .editor-fields{flex:1;min-width:0;}
+  .editor-title{width:100%;border:none;background:transparent;font-family:var(--font-display);font-weight:600;font-size:2.1rem;color:var(--ink);padding:6px 0;}
+  .editor-title::placeholder{color:var(--ink-faint);}
+  .editor-title:focus{outline:none;}
+  .editor-content{width:100%;min-height:420px;border:none;background:transparent;font-family:var(--font-display);font-size:1.2rem;line-height:1.8;color:var(--ink);resize:vertical;padding:10px 0;}
+  .editor-content::placeholder{color:var(--ink-faint);}
+  .editor-content:focus{outline:none;}
+  .editor-cover-preview{margin:18px 0 0 48px;}
+  .editor-cover-preview img{max-width:260px;border-radius:10px;display:block;margin-bottom:10px;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,18,22,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+  .modal-card{background:var(--paper-raised);border-radius:var(--radius);padding:30px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-hover);}
+  .modal-card h2{font-family:var(--font-display);font-weight:600;font-size:1.4rem;margin:0 0 6px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap;}
+  @media (max-width:640px){ .editor-cover-preview{margin-left:0;} }
 
   .auth-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow);margin-top:36px;}
   .auth-card h1{margin:8px 0 4px;}
@@ -480,7 +502,7 @@
       app.innerHTML = '<div class="view-enter">'
         + '<section class="hero"><div class="hero-mark">L</div>'
         + '<h1>Ideias transformadas<br>em palavras.</h1>'
-        + '<p class="sub">Letrum é onde uma ideia solta vira um texto que faz sentido — e onde você descobre o que outras pessoas já pensaram sobre o mesmo assunto.</p>'
+        + '<p class="sub">Letrum é onde uma ideia solta vira um texto que faz sentido, e onde você descobre o que outras pessoas já pensaram sobre o mesmo assunto.</p>'
         + '<a class="btn btn-primary" href="#/escrever">Começar a escrever</a></section>'
         + '<div class="chips">'+chips+'</div>'
         + '<div class="layout"><div><div class="feed">'+feedHtml+'</div></div>'+r.sidebarHtml+'</div></div>';
@@ -659,54 +681,107 @@
 
   function renderWrite(){
     if(!session){ showToast('Entre para escrever uma história'); location.hash='#/entrar'; return; }
-    var catOptions = CATEGORIES.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
-    app.innerHTML = '<div class="write-wrap view-enter">'
-      + '<h1>Transforme sua ideia em palavras</h1><p class="hint">Ninguém vê enquanto você escreve. Publique só quando estiver pronto.</p>'
-      + '<form id="writeForm">'
-      + '<div class="field"><input class="title-input" id="wTitle" type="text" placeholder="Título da sua história" required></div>'
-      + '<div class="field"><input class="title-input" id="wSubtitle" type="text" placeholder="Subtítulo (opcional)" style="font-size:1.05rem;font-weight:400;font-style:italic;"></div>'
-      + '<div class="field" style="display:flex;gap:14px;flex-wrap:wrap;">'
-      + '<div style="flex:1;min-width:180px;"><label>Categoria</label><select class="tag-select" id="wCategory"><option value="">Sem categoria</option>'+catOptions+'</select></div>'
-      + '<div style="flex:1;min-width:180px;"><label>Imagem de capa (opcional)</label><input type="file" id="wCover" accept="image/*"></div></div>'
-      + '<div class="field"><label>Tags (até 5, separadas por vírgula)</label><input class="tag-select" id="wTags" type="text" style="width:100%;" placeholder="ex: carreira, autoconhecimento"></div>'
-      + '<div class="field"><label>Descrição curta (aparece no feed)</label><input class="tag-select" id="wDescription" type="text" style="width:100%;" maxlength="200" placeholder="Uma ou duas frases sobre a sua história"></div>'
-      + '<div class="field"><label>Sua história</label><textarea class="body-textarea" id="wBody" placeholder="Comece por onde for mais fácil. Separe parágrafos com uma linha em branco." required></textarea></div>'
-      + '<div class="field"><label>Agendar publicação (opcional)</label><input class="tag-select" id="wSchedule" type="datetime-local"></div>'
-      + '<div class="write-actions"><a class="btn btn-ghost" href="#/">Cancelar</a>'
-      + '<button class="btn btn-ghost" type="button" data-status="draft">Salvar rascunho</button>'
-      + '<button class="btn btn-primary" type="button" data-status="publish">Publicar</button></div>'
-      + '</form></div>';
+    var coverUrl = null;
 
-    Array.prototype.forEach.call(document.querySelectorAll('#writeForm button[data-status]'), function(btn){
-      btn.addEventListener('click', function(){
-        var title = document.getElementById('wTitle').value.trim();
-        var bodyText = document.getElementById('wBody').value.trim();
-        if(!title || !bodyText){ showToast('Escreva um título e o texto antes de continuar'); return; }
-        var wantsStatus = btn.getAttribute('data-status');
-        var scheduleVal = document.getElementById('wSchedule').value;
-        var status = wantsStatus==='publish' ? 'published' : 'draft';
-        var scheduledAt = null;
-        if(wantsStatus==='publish' && scheduleVal){
-          var d = new Date(scheduleVal);
-          if(d.getTime() > Date.now()){ status='scheduled'; scheduledAt = d.toISOString(); }
-        }
-        btn.disabled = true;
-        var original = btn.textContent; btn.textContent = 'Salvando...';
-        var fileInput = document.getElementById('wCover');
-        var uploadPromise = fileInput.files[0] ? uploadFile('article-covers', fileInput.files[0]) : Promise.resolve(null);
-        uploadPromise.then(function(coverUrl){
-          var tagNames = document.getElementById('wTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
-          return createArticle({
-            title: title, subtitle: document.getElementById('wSubtitle').value.trim(),
-            description: document.getElementById('wDescription').value.trim(), content: bodyText,
-            categoryId: document.getElementById('wCategory').value || null,
-            tagNames: tagNames, status: status, coverUrl: coverUrl, scheduledAt: scheduledAt
-          });
-        }).then(function(created){
-          showToast(status==='published' ? 'História publicada!' : status==='scheduled' ? 'História agendada!' : 'Rascunho salvo!');
-          location.hash = status==='published' ? '#/artigo/'+created.slug : '#/painel';
-        }).catch(function(err){ showToast('Erro ao salvar: '+err.message); btn.disabled=false; btn.textContent=original; });
-      });
+    app.innerHTML = '<div class="write-wrap view-enter">'
+      + '<div class="write-topbar"><span class="write-status">Rascunho</span>'
+      + '<div class="write-topbar-actions">'
+      + '<button class="btn btn-ghost btn-sm" type="button" id="wSaveDraft">Salvar rascunho</button>'
+      + '<button class="btn btn-primary btn-sm" type="button" id="wPublishOpen">Publicar</button>'
+      + '</div></div>'
+      + '<div class="editor-body">'
+      + '<button class="editor-plus" type="button" id="editorPlus" title="Adicionar imagem de capa">+</button>'
+      + '<div class="editor-fields">'
+      + '<input class="editor-title" id="wTitle" type="text" placeholder="Título">'
+      + '<textarea class="editor-content" id="wBody" placeholder="Conte sua história..."></textarea>'
+      + '</div></div>'
+      + '<div class="editor-cover-preview" id="editorCoverPreview" style="display:none;"></div>'
+      + '<input type="file" id="wCoverHidden" accept="image/*" style="display:none;">'
+      + '</div>';
+
+    document.getElementById('editorPlus').addEventListener('click', function(){
+      document.getElementById('wCoverHidden').click();
+    });
+    document.getElementById('wCoverHidden').addEventListener('change', function(e){
+      var f = e.target.files[0];
+      if(!f) return;
+      uploadFile('article-covers', f).then(function(url){
+        coverUrl = url;
+        var prev = document.getElementById('editorCoverPreview');
+        prev.style.display = 'block';
+        prev.innerHTML = '<img src="'+esc(url)+'" alt="Capa"><button type="button" class="btn btn-ghost btn-sm" id="removeCover">Remover capa</button>';
+        document.getElementById('removeCover').addEventListener('click', function(){
+          coverUrl = null; prev.style.display = 'none'; prev.innerHTML = '';
+        });
+        showToast('Capa adicionada');
+      }).catch(function(err){ showToast('Erro ao enviar imagem: '+err.message); });
+    });
+
+    function getDraft(){
+      return {
+        title: document.getElementById('wTitle').value.trim(),
+        body: document.getElementById('wBody').value.trim()
+      };
+    }
+
+    document.getElementById('wSaveDraft').addEventListener('click', function(){
+      var d = getDraft();
+      if(!d.title || !d.body){ showToast('Escreva um título e o texto antes de salvar'); return; }
+      var btn = this; btn.disabled = true; var original = btn.textContent; btn.textContent = 'Salvando...';
+      createArticle({
+        title: d.title, subtitle: '', description: d.body.slice(0,140),
+        content: d.body, categoryId: null, tagNames: [], status: 'draft', coverUrl: coverUrl, scheduledAt: null
+      }).then(function(){
+        showToast('Rascunho salvo!');
+        location.hash = '#/painel';
+      }).catch(function(err){ showToast('Erro ao salvar: '+err.message); btn.disabled=false; btn.textContent=original; });
+    });
+
+    document.getElementById('wPublishOpen').addEventListener('click', function(){
+      var d = getDraft();
+      if(!d.title || !d.body){ showToast('Escreva um título e o texto antes de publicar'); return; }
+      openPublishModal(d, function(){ return coverUrl; });
+    });
+  }
+
+  function openPublishModal(draft, getCoverUrl){
+    var catOptions = CATEGORIES.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div class="modal-card">'
+      + '<h2>Prepare pra publicar</h2>'
+      + '<p class="hint">Só mais alguns detalhes antes da sua história ir ao ar.</p>'
+      + '<div class="field"><label>Categoria</label><select class="tag-select" id="mCategory" style="width:100%;"><option value="">Sem categoria</option>'+catOptions+'</select></div>'
+      + '<div class="field"><label>Tags (até 5, separadas por vírgula)</label><input class="tag-select" id="mTags" type="text" style="width:100%;" placeholder="ex: carreira, autoconhecimento"></div>'
+      + '<div class="field"><label>Descrição curta (aparece no feed)</label><textarea class="tag-select" id="mDescription" style="width:100%;min-height:70px;font-family:var(--font-ui);font-size:.92rem;" maxlength="200">'+esc(draft.body.slice(0,140))+'</textarea></div>'
+      + '<div class="field"><label>Agendar publicação (opcional)</label><input class="tag-select" id="mSchedule" type="datetime-local" style="width:100%;"></div>'
+      + '<div class="modal-actions"><button class="btn btn-ghost" type="button" id="mCancel">Cancelar</button>'
+      + '<button class="btn btn-primary" type="button" id="mConfirm">Publicar agora</button></div>'
+      + '</div>';
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+    document.getElementById('mCancel').addEventListener('click', function(){ overlay.remove(); });
+
+    document.getElementById('mConfirm').addEventListener('click', function(){
+      var btn = this; btn.disabled = true; var original = btn.textContent; btn.textContent = 'Publicando...';
+      var scheduleVal = document.getElementById('mSchedule').value;
+      var status = 'published';
+      var scheduledAt = null;
+      if(scheduleVal){
+        var d = new Date(scheduleVal);
+        if(d.getTime() > Date.now()){ status = 'scheduled'; scheduledAt = d.toISOString(); }
+      }
+      var tagNames = document.getElementById('mTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+      createArticle({
+        title: draft.title, subtitle: '', description: document.getElementById('mDescription').value.trim(),
+        content: draft.body, categoryId: document.getElementById('mCategory').value || null,
+        tagNames: tagNames, status: status, coverUrl: getCoverUrl(), scheduledAt: scheduledAt
+      }).then(function(created){
+        overlay.remove();
+        showToast(status==='published' ? 'História publicada!' : 'História agendada!');
+        location.hash = status==='published' ? '#/artigo/'+created.slug : '#/painel';
+      }).catch(function(err){ showToast('Erro ao publicar: '+err.message); btn.disabled=false; btn.textContent=original; });
     });
   }
 
@@ -794,7 +869,7 @@
 
   function renderLogin(){
     app.innerHTML = '<div class="write-wrap view-enter" style="max-width:420px;"><div class="auth-card">'
-      + '<span class="brand-mark">L</span><h1 style="font-style:italic;">Entrar</h1>'
+      + '<span class="brand-mark">L</span><h1>Entrar</h1>'
       + '<p class="hint">Use uma conta de demonstração ou a sua.</p>'
       + '<form id="loginForm"><div class="field"><label>E-mail</label><input class="tag-select" id="lEmail" type="email" style="width:100%;" required></div>'
       + '<div class="field"><label>Senha</label><input class="tag-select" id="lPassword" type="password" style="width:100%;" required></div>'
@@ -815,7 +890,7 @@
 
   function renderSignup(){
     app.innerHTML = '<div class="write-wrap view-enter" style="max-width:420px;"><div class="auth-card">'
-      + '<span class="brand-mark">L</span><h1 style="font-style:italic;">Criar conta</h1>'
+      + '<span class="brand-mark">L</span><h1>Criar conta</h1>'
       + '<form id="signupForm">'
       + '<div class="field"><label>Nome completo</label><input class="tag-select" id="suName" style="width:100%;" required></div>'
       + '<div class="field"><label>Nome de usuário</label><input class="tag-select" id="suUsername" style="width:100%;" required pattern="[a-z0-9._-]+" title="Letras minúsculas, números, pontos e traços"></div>'
