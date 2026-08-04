@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Letrum — Ideias transformadas em palavras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#201C24; --ink-soft:#5A5462; --ink-faint:#8A8390;
+    --paper:#F5F3F0; --paper-raised:#FFFFFF; --line:#E4DFD9;
+    --plum:#3B3B78; --plum-deep:#2A2A5C; --plum-wash:#EAEAF5;
+    --gold:#C98A3E; --sage:#4B6B58;
+    --shadow:0 1px 2px rgba(32,28,36,.04), 0 8px 24px rgba(32,28,36,.06);
+    --shadow-hover:0 2px 4px rgba(32,28,36,.06), 0 16px 32px rgba(32,28,36,.10);
+    --font-display:'Newsreader', Georgia, serif;
+    --font-ui:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-signature:'Caveat', cursive;
+    --radius:14px;
+  }
+  [data-theme="dark"]{
+    --ink:#F1EEEA; --ink-soft:#C9C2CC; --ink-faint:#8D8690;
+    --paper:#1B181D; --paper-raised:#242026; --line:#37323C;
+    --plum:#9C97D9; --plum-deep:#7D77BE; --plum-wash:#2E2B4F;
+    --gold:#E0A85C; --sage:#6FA189;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --shadow-hover:0 2px 4px rgba(0,0,0,.35), 0 16px 32px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-ui);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--plum-wash);color:var(--plum-deep);}
+  :focus-visible{outline:2px solid var(--plum);outline-offset:3px;border-radius:4px;}
+  @media (prefers-reduced-motion: no-preference){
+    body,.card,.btn,.chip,.like-btn,.brand-mark,.spinner,#toast{transition:all .2s ease;}
+    .spinner{animation:spin .8s linear infinite;}
+    .view-enter{animation:riseIn .5s ease both;}
+    @keyframes riseIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes spin{to{transform:rotate(360deg);}}
+  }
+
+  header.site-nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb, var(--paper) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px;}
+  .brand{display:flex;align-items:baseline;gap:2px;flex-shrink:0;}
+  .brand-mark{font-family:var(--font-signature);font-size:2.6rem;line-height:0;color:var(--ink);transform:translateY(6px);}
+  .brand-word{font-family:var(--font-ui);font-weight:700;font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);}
+  .nav-search{flex:1;max-width:320px;display:flex;align-items:center;gap:8px;background:var(--paper-raised);border:1px solid var(--line);border-radius:999px;padding:8px 14px;}
+  .nav-search svg{flex-shrink:0;opacity:.5;}
+  .nav-search input{border:none;background:transparent;outline:none;font-family:var(--font-ui);font-size:.9rem;width:100%;color:var(--ink);}
+  .nav-links{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .nav-link{font-size:.88rem;font-weight:500;color:var(--ink-soft);padding:8px 12px;border-radius:999px;}
+  .nav-link:hover{background:var(--paper-raised);color:var(--ink);}
+  .theme-toggle{background:var(--paper-raised);border:1px solid var(--line);border-radius:999px;width:38px;height:38px;font-size:1rem;flex-shrink:0;}
+
+  .btn{font-family:var(--font-ui);font-weight:600;font-size:.88rem;border:none;border-radius:999px;padding:10px 20px;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--plum);color:#fff;}
+  .btn-primary:hover{background:var(--plum-deep);}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-sm{padding:6px 12px;font-size:.78rem;}
+  .btn:disabled{opacity:.6;cursor:default;}
+
+  main{max-width:1120px;margin:0 auto;padding:0 24px 80px;}
+  footer.site-footer{border-top:1px solid var(--line);margin-top:60px;padding:32px 24px 48px;text-align:center;}
+  footer.site-footer .brand-mark{font-size:2rem;}
+  footer.site-footer p{color:var(--ink-faint);font-size:.82rem;margin:6px 0 0;}
+
+  #toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:var(--paper);font-family:var(--font-ui);font-size:.88rem;font-weight:500;padding:12px 20px;border-radius:999px;box-shadow:var(--shadow-hover);opacity:0;pointer-events:none;z-index:100;max-width:90vw;text-align:center;}
+  #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+
+  .hero{position:relative;padding:56px 0 32px;overflow:hidden;}
+  .hero-mark{position:absolute;top:-40px;left:-20px;font-family:var(--font-signature);font-size:14rem;color:var(--ink);opacity:.06;line-height:1;pointer-events:none;user-select:none;}
+  .hero h1{font-family:var(--font-display);font-weight:500;font-style:italic;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.15;max-width:740px;margin:0 0 16px;position:relative;}
+  .hero p.sub{font-family:var(--font-ui);color:var(--ink-soft);font-size:1.02rem;max-width:520px;margin:0 0 22px;position:relative;}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:start;}
+  @media (max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .section-label{font-family:var(--font-ui);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 18px;display:flex;align-items:center;gap:10px;}
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+  .chip{font-family:var(--font-ui);font-size:.82rem;font-weight:500;padding:7px 15px;border-radius:999px;border:1px solid var(--line);background:var(--paper-raised);color:var(--ink-soft);}
+  button.chip:hover{border-color:var(--plum);color:var(--plum);}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+
+  .feed{display:flex;flex-direction:column;}
+  .card{display:flex;gap:20px;padding:26px 0;border-bottom:1px solid var(--line);}
+  .card:hover .card-title{color:var(--plum);}
+  .card-quote{font-family:var(--font-signature);font-size:2.2rem;color:var(--ink);line-height:1;flex-shrink:0;width:26px;transform:translateY(2px);}
+  .card-body{flex:1;min-width:0;}
+  .card-eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .card-title{font-family:var(--font-display);font-weight:600;font-size:1.4rem;margin:0 0 8px;line-height:1.3;}
+  .card-excerpt{color:var(--ink-soft);font-size:.96rem;line-height:1.55;margin:0 0 14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .card-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:.82rem;color:var(--ink-faint);}
+  .avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-weight:700;font-size:.7rem;color:#fff;flex-shrink:0;}
+  .avatar.lg{width:64px;height:64px;font-size:1.3rem;}
+  .card-meta .dot::before{content:"·";margin:0 2px;}
+  .card-meta .like-count{margin-left:auto;display:flex;align-items:center;gap:5px;}
+
+  .empty-state{padding:60px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-display);font-size:1.15rem;font-style:italic;line-height:1.6;}
+  .state-msg{padding:80px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-ui);}
+  .state-msg.error{color:var(--plum-deep);}
+  .state-msg .btn{margin-top:16px;}
+  .spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--plum);border-radius:50%;margin:0 auto 16px;}
+
+  .sidebar-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:24px;box-shadow:var(--shadow);}
+  .author-row{display:flex;align-items:center;gap:12px;padding:9px 0;}
+  .author-row .name{font-weight:600;font-size:.9rem;}
+  .author-row .count{font-size:.78rem;color:var(--ink-faint);}
+  .cta-card{background:linear-gradient(160deg,var(--plum) 0%,var(--plum-deep) 100%);color:#fff;border-radius:var(--radius);padding:26px;}
+  .cta-card .brand-mark{color:#fff;opacity:.6;}
+  .cta-card h3{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.25rem;margin:6px 0 10px;}
+  .cta-card p{font-size:.86rem;opacity:.85;margin:0 0 18px;line-height:1.5;}
+  .cta-card .btn-primary{background:#fff;color:var(--plum-deep);}
+  .cta-card .btn-primary:hover{background:var(--paper);}
+
+  .article-wrap{max-width:680px;margin:0 auto;padding-top:36px;}
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:500;color:var(--ink-soft);margin-bottom:24px;}
+  .back-link:hover{color:var(--plum);}
+  .article-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);}
+  .article-title{font-family:var(--font-display);font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.2;margin:10px 0 8px;}
+  .byline{display:flex;align-items:center;gap:12px;margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .byline .who .name{font-weight:600;font-size:.94rem;}
+  .byline .who .meta{font-size:.8rem;color:var(--ink-faint);}
+  .article-body{font-family:var(--font-display);font-size:1.15rem;line-height:1.8;}
+  .article-body p{margin:0 0 24px;}
+  .article-body p:first-of-type::first-letter{font-size:3.4rem;font-weight:600;float:left;line-height:.85;padding:6px 8px 0 0;color:var(--plum);}
+  .pull-quote{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.4rem;line-height:1.5;color:var(--plum-deep);margin:32px 0;padding-left:22px;border-left:3px solid var(--plum);}
+  .engage-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:40px 0;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .like-btn{display:flex;align-items:center;gap:8px;background:var(--paper-raised);border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-family:var(--font-ui);font-weight:600;font-size:.86rem;color:var(--ink);}
+  .like-btn:hover{border-color:var(--plum);}
+  .like-btn.liked{background:var(--plum-wash);border-color:var(--plum);color:var(--plum-deep);}
+  .responses-count{font-size:.86rem;color:var(--ink-faint);margin-left:auto;}
+  .responses h3{font-family:var(--font-ui);font-size:1rem;font-weight:700;margin-bottom:18px;}
+  .response{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);}
+  .response .name{font-weight:600;font-size:.88rem;margin-bottom:4px;}
+  .response .text{font-size:.92rem;color:var(--ink-soft);line-height:1.55;}
+  .response-form{margin-top:22px;display:flex;flex-direction:column;gap:10px;}
+  .response-form textarea{font-family:var(--font-ui);font-size:.92rem;padding:12px 14px;border:1px solid var(--line);border-radius:10px;resize:vertical;min-height:70px;background:var(--paper-raised);color:var(--ink);}
+  .response-form textarea:focus{outline:none;border-color:var(--plum);}
+  .response-form .btn{align-self:flex-end;}
+  .progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--plum);z-index:60;width:0%;}
+
+  .profile-head{display:flex;align-items:flex-start;gap:22px;padding:44px 0 32px;flex-wrap:wrap;}
+  .profile-head h1{font-family:var(--font-display);font-weight:600;font-size:1.9rem;margin:0 0 6px;}
+  .profile-head .bio{color:var(--ink-soft);font-size:.94rem;max-width:520px;line-height:1.5;margin:0 0 10px;}
+  .profile-stats{display:flex;gap:16px;font-size:.82rem;color:var(--ink-faint);flex-wrap:wrap;}
+  .profile-stats b{color:var(--ink);}
+
+  .write-wrap{max-width:680px;margin:0 auto;padding-top:32px;}
+  .write-wrap h1{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:1.8rem;margin:0 0 6px;}
+  .write-wrap .hint{color:var(--ink-faint);font-size:.88rem;margin:0 0 28px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px;}
+  .title-input{width:100%;border:none;border-bottom:2px solid var(--line);background:transparent;font-family:var(--font-display);font-size:1.7rem;font-weight:600;padding:6px 0;color:var(--ink);}
+  .title-input:focus{outline:none;border-color:var(--plum);}
+  .title-input::placeholder{color:var(--ink-faint);font-style:italic;font-weight:400;}
+  .tag-select{font-family:var(--font-ui);font-size:.92rem;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper-raised);color:var(--ink);}
+  .tag-select:focus{outline:none;border-color:var(--plum);}
+  select.tag-select{width:100%;}
+  .body-textarea{width:100%;min-height:320px;border:1px solid var(--line);border-radius:12px;padding:20px;font-family:var(--font-display);font-size:1.08rem;line-height:1.7;background:var(--paper-raised);color:var(--ink);resize:vertical;}
+  .body-textarea:focus{outline:none;border-color:var(--plum);}
+  .write-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap;}
+
+  .auth-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow);margin-top:36px;}
+  .auth-card h1{margin:8px 0 4px;}
+
+  .dropdown{position:relative;}
+  .avatar-btn{background:none;border:none;padding:0;cursor:pointer;border-radius:50%;}
+  .dropdown-menu{position:absolute;right:0;top:calc(100% + 10px);background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-hover);min-width:190px;padding:8px;display:none;flex-direction:column;z-index:60;}
+  .dropdown-menu.open{display:flex;}
+  .dropdown-menu a,.dropdown-menu button{text-align:left;padding:9px 12px;border-radius:8px;font-size:.88rem;font-family:var(--font-ui);background:none;border:none;color:var(--ink);cursor:pointer;}
+  .dropdown-menu a:hover,.dropdown-menu button:hover{background:var(--paper);}
+  .dropdown-menu button.logout{color:var(--plum-deep);font-weight:600;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px;}
+  @media (max-width:640px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;}
+  .stat-value{font-family:var(--font-display);font-size:1.9rem;font-weight:600;color:var(--plum);}
+  .stat-label{font-size:.75rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+  .bar-chart{margin-top:12px;}
+  .bar-row{display:grid;grid-template-columns:170px 1fr 36px;align-items:center;gap:12px;padding:7px 0;}
+  .bar-label{font-size:.83rem;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bar-track{height:8px;background:var(--line);border-radius:999px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--plum);border-radius:999px;}
+  .bar-value{font-size:.78rem;color:var(--ink-faint);text-align:right;}
+  @media (max-width:640px){.bar-row{grid-template-columns:90px 1fr 28px;}.bar-label{font-size:.72rem;}}
+  table.dash-table{width:100%;border-collapse:collapse;margin-top:14px;}
+  .dash-table th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);padding:10px 10px;border-bottom:1px solid var(--line);}
+  .dash-table td{padding:14px 10px;border-bottom:1px solid var(--line);font-size:.88rem;vertical-align:middle;}
+  .dash-table{overflow-x:auto;display:block;}
+
+  @media (max-width:640px){
+    .nav-search{display:none;}
+    .nav-inner{padding:12px 16px;}
+    main{padding:0 16px 60px;}
+    .hero{padding:36px 0 20px;}
+    .hero-mark{font-size:9rem;}
+    .card{gap:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="#/" aria-label="LETRUM, início">
+      <span class="brand-mark">L</span><span class="brand-word">Letrum</span>
+    </a>
+    <div class="nav-search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="searchInput" type="text" placeholder="Buscar histórias, autores...">
+    </div>
+    <nav class="nav-links" id="navActions"></nav>
+    <button class="theme-toggle" id="themeToggle" type="button" title="Alternar tema">🌙</button>
+  </div>
+</header>
+
+<div id="progressBar" class="progress-bar" style="display:none;"></div>
+<main id="app"></main>
+
+<footer class="site-footer">
+  <span class="brand-mark">L</span>
+  <div class="brand-word" style="font-size:.85rem;">Letrum</div>
+  <p>Onde ideias soltas viram texto que faz sentido.</p>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SUPABASE_URL = 'https://esjxazzrxamgaxpwbtai.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_xO0zuYAnTaaPhlzGkXWMYw_fXJbw3Yv';
+  var ARTICLE_SELECT = 'id,title,subtitle,slug,description,content,cover_image_url,read_time_minutes,views_count,status,published_at,author_id,category:categories(id,name,slug),profiles(id,username,full_name,avatar_url),claps(count),comments(id),article_tags(tags(name,slug))';
+  var PALETTE = ['#7A3B54','#C98A3E','#4B6B58','#3E5C76','#9C3B4B','#5B4B8A','#2F6F6A'];
+
+  var session = null;
+  var myProfile = null;
+  var CATEGORIES = [];
+  var theme = 'light';
+  var state = { activeCategory: null, query: '' };
+
+  var app = document.getElementById('app');
+  var toastEl = document.getElementById('toast');
+  var progressBar = document.getElementById('progressBar');
+
+  /* ---------- utils ---------- */
+  function esc(str){ var d = document.createElement('div'); d.textContent = (str===undefined||str===null)?'':String(str); return d.innerHTML; }
+  function normalize(str){ return String(str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+  function slugify(str){ return normalize(str).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'historia'; }
+  function debounce(fn, wait){ var t; return function(){ var args=arguments, ctx=this; clearTimeout(t); t=setTimeout(function(){ fn.apply(ctx,args); }, wait); }; }
+  function showToast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(showToast._t); showToast._t = setTimeout(function(){ toastEl.classList.remove('show'); }, 3000); }
+  function showLoading(msg){ app.innerHTML = '<div class="state-msg"><div class="spinner"></div>'+esc(msg||'Carregando...')+'</div>'; }
+  function showError(msg, retryFn){
+    app.innerHTML = '<div class="state-msg error">'+esc(msg)+'<br><button class="btn btn-ghost" id="retryBtn">Tentar de novo</button></div>';
+    var b = document.getElementById('retryBtn'); if(b && retryFn) b.addEventListener('click', retryFn);
+  }
+  function likeIconSvg(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 4l4 6 4-8 4 8 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'; }
+  function initialsFrom(name){ var parts = String(name||'?').split(' ').filter(Boolean).slice(0,2); return parts.map(function(w){return w[0].toUpperCase();}).join('') || '?'; }
+  function colorFromString(str){ str = String(str||'x'); var h=0; for(var i=0;i<str.length;i++){ h = str.charCodeAt(i) + ((h<<5)-h); } return PALETTE[Math.abs(h)%PALETTE.length]; }
+  function authorAvatar(p, size){
+    var cls = size==='lg' ? 'avatar lg' : 'avatar';
+    if(p && p.avatar_url) return '<div class="'+cls+'" style="background-image:url(\''+esc(p.avatar_url)+'\');background-size:cover;background-position:center;"></div>';
+    var initials = initialsFrom(p && (p.full_name || p.username));
+    var color = colorFromString(p && (p.id || p.username));
+    return '<div class="'+cls+'" style="background:'+color+'">'+esc(initials)+'</div>';
+  }
+  function totalClaps(a){ return (a.claps||[]).reduce(function(s,c){return s+(c.count||0);},0); }
+  function tagList(a){ return (a.article_tags||[]).map(function(at){return at.tags;}).filter(Boolean); }
+  function statusLabel(s){ return s==='published'?'Publicado':s==='scheduled'?'Agendado':'Rascunho'; }
+
+  /* ---------- API ---------- */
+  function restRequest(path, opts){
+    opts = opts || {};
+    var headers = {
+      apikey: SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + ((opts.useAuth !== false && session) ? session.access_token : SUPABASE_KEY)
+    };
+    if(opts.prefer) headers['Prefer'] = opts.prefer;
+    return fetch(SUPABASE_URL + path, {
+      method: opts.method || 'GET',
+      headers: headers,
+      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
+    }).then(function(res){
+      return res.text().then(function(text){
+        var data = null;
+        try { data = text ? JSON.parse(text) : null; } catch(e){ data = text; }
+        if(!res.ok){
+          var msg = (data && (data.message || data.error_description || data.msg || data.error)) || ('Erro '+res.status);
+          throw new Error(msg);
+        }
+        return data;
+      });
+    });
+  }
+
+  function signUp(payload){
+    return restRequest('/rest/v1/profiles?username=eq.'+encodeURIComponent(payload.username)+'&select=id', {useAuth:false}).then(function(existing){
+      if(existing && existing.length) throw new Error('Esse nome de usuário já está em uso.');
+      return restRequest('/auth/v1/signup', { method:'POST', useAuth:false,
+        body: { email: payload.email, password: payload.password, data: { username: payload.username, full_name: payload.fullName } } });
+    }).then(function(data){
+      if(data && data.access_token){
+        session = { access_token: data.access_token, refresh_token: data.refresh_token, user: data.user };
+        return loadMyProfile().then(function(){ return {confirmed:true}; });
+      }
+      return {confirmed:false};
+    });
+  }
+  function signIn(payload){
+    return restRequest('/auth/v1/token?grant_type=password', { method:'POST', useAuth:false, body:{email:payload.email,password:payload.password} })
+      .then(function(data){
+        session = { access_token:data.access_token, refresh_token:data.refresh_token, user:data.user };
+        return loadMyProfile();
+      });
+  }
+  function signOut(){ session=null; myProfile=null; }
+  function loadMyProfile(){
+    if(!session) return Promise.resolve();
+    return restRequest('/rest/v1/profiles?id=eq.'+session.user.id+'&select=*').then(function(rows){ myProfile = rows[0]||null; });
+  }
+
+  function fetchCategories(){ return restRequest('/rest/v1/categories?select=id,name,slug&order=name.asc', {useAuth:false}).then(function(d){ CATEGORIES = d; }); }
+
+  function fetchFeed(opts){
+    opts = opts || {};
+    var path = '/rest/v1/articles?select='+encodeURIComponent(ARTICLE_SELECT)+'&status=eq.published&order=published_at.desc';
+    if(opts.categorySlug){
+      var cat = CATEGORIES.filter(function(c){return c.slug===opts.categorySlug;})[0];
+      if(cat) path += '&category_id=eq.'+cat.id;
+    }
+    if(opts.query){ path += '&or=(title.ilike.*'+encodeURIComponent(opts.query)+'*,description.ilike.*'+encodeURIComponent(opts.query)+'*)'; }
+    return restRequest(path, {useAuth:false});
+  }
+  function fetchArticleBySlug(slug){ return restRequest('/rest/v1/articles?select='+encodeURIComponent(ARTICLE_SELECT)+'&slug=eq.'+encodeURIComponent(slug)+'&limit=1', {useAuth: !!session}).then(function(r){return r[0]||null;}); }
+  function fetchProfileByUsername(u){ return restRequest('/rest/v1/profiles?username=eq.'+encodeURIComponent(u)+'&select=*', {useAuth:false}).then(function(r){return r[0]||null;}); }
+  function fetchArticlesByAuthor(authorId, onlyPublished){
+    var path = '/rest/v1/articles?select='+encodeURIComponent(ARTICLE_SELECT)+'&author_id=eq.'+authorId+'&order=created_at.desc';
+    if(onlyPublished!==false) path += '&status=eq.published';
+    return restRequest(path, {useAuth: onlyPublished===false});
+  }
+  function fetchMyArticlesAll(){ return restRequest('/rest/v1/articles?author_id=eq.'+myProfile.id+'&select='+encodeURIComponent(ARTICLE_SELECT)+'&order=created_at.desc'); }
+  function fetchFollowCounts(userId){
+    return Promise.all([
+      restRequest('/rest/v1/follows?following_id=eq.'+userId+'&select=follower_id', {useAuth:false}),
+      restRequest('/rest/v1/follows?follower_id=eq.'+userId+'&select=following_id', {useAuth:false})
+    ]).then(function(r){ return { followers: r[0].length, following: r[1].length }; });
+  }
+  function isFollowing(followerId, followingId){
+    return restRequest('/rest/v1/follows?follower_id=eq.'+followerId+'&following_id=eq.'+followingId+'&select=follower_id', {useAuth:false}).then(function(r){return r.length>0;});
+  }
+  function toggleFollow(followingId){
+    return isFollowing(myProfile.id, followingId).then(function(following){
+      if(following) return restRequest('/rest/v1/follows?follower_id=eq.'+myProfile.id+'&following_id=eq.'+followingId, {method:'DELETE'}).then(function(){return false;});
+      return restRequest('/rest/v1/follows', {method:'POST', body:{follower_id:myProfile.id, following_id:followingId}}).then(function(){return true;});
+    });
+  }
+  function isSaved(articleId){
+    if(!session) return Promise.resolve(false);
+    return restRequest('/rest/v1/saved_articles?user_id=eq.'+myProfile.id+'&article_id=eq.'+articleId+'&select=user_id').then(function(r){return r.length>0;});
+  }
+  function toggleSave(articleId){
+    return isSaved(articleId).then(function(saved){
+      if(saved) return restRequest('/rest/v1/saved_articles?user_id=eq.'+myProfile.id+'&article_id=eq.'+articleId, {method:'DELETE'}).then(function(){return false;});
+      return restRequest('/rest/v1/saved_articles', {method:'POST', body:{user_id:myProfile.id, article_id:articleId}}).then(function(){return true;});
+    });
+  }
+  function fetchSavedArticles(){
+    return restRequest('/rest/v1/saved_articles?user_id=eq.'+myProfile.id+'&select=article:articles('+encodeURIComponent(ARTICLE_SELECT)+')&order=created_at.desc')
+      .then(function(rows){ return rows.map(function(r){return r.article;}).filter(Boolean); });
+  }
+  function clapArticle(articleId){ return restRequest('/rest/v1/rpc/clap_article', {method:'POST', body:{p_article_id:articleId}}); }
+  function incrementViews(articleId){ return restRequest('/rest/v1/rpc/increment_article_views', {method:'POST', useAuth:false, body:{p_article_id:articleId}}).catch(function(){}); }
+  function fetchComments(articleId){ return restRequest('/rest/v1/comments?article_id=eq.'+articleId+'&select=id,body,created_at,profiles(username,full_name,avatar_url)&order=created_at.asc', {useAuth:false}); }
+  function postComment(articleId, body){ return restRequest('/rest/v1/comments', {method:'POST', body:{article_id:articleId, author_id:myProfile.id, body:body}, prefer:'return=representation'}); }
+
+  function ensureTag(name){
+    var slug = slugify(name);
+    return restRequest('/rest/v1/tags?on_conflict=slug', {method:'POST', body:{name:name, slug:slug}, prefer:'resolution=merge-duplicates,return=representation'}).then(function(r){return r[0];});
+  }
+  function createArticle(f){
+    var slug = slugify(f.title);
+    var words = f.content.trim().split(/\s+/).filter(Boolean).length;
+    var readTime = Math.max(1, Math.round(words/200));
+    var body = {
+      author_id: myProfile.id, title: f.title, subtitle: f.subtitle||'', description: f.description||'',
+      content: f.content, category_id: f.categoryId||null, status: f.status,
+      read_time_minutes: readTime, cover_image_url: f.coverUrl||null, slug: slug,
+      published_at: f.status==='published' ? new Date().toISOString() : null,
+      scheduled_at: f.status==='scheduled' ? f.scheduledAt : null
+    };
+    function attempt(b){
+      return restRequest('/rest/v1/articles', {method:'POST', body:b, prefer:'return=representation'}).then(function(r){return r[0];})
+        .catch(function(e){
+          if(String(e.message).toLowerCase().indexOf('duplicate')>-1){
+            var retryBody = Object.assign({}, b, {slug: b.slug+'-'+Math.random().toString(36).slice(2,6)});
+            return restRequest('/rest/v1/articles', {method:'POST', body:retryBody, prefer:'return=representation'}).then(function(r){return r[0];});
+          }
+          throw e;
+        });
+    }
+    return attempt(body).then(function(created){
+      var names = (f.tagNames||[]).slice(0,5);
+      if(!names.length) return created;
+      return Promise.all(names.map(ensureTag)).then(function(tags){
+        return restRequest('/rest/v1/article_tags', {method:'POST', body: tags.map(function(t){return {article_id:created.id, tag_id:t.id};})}).then(function(){return created;});
+      });
+    });
+  }
+  function publishNow(articleId){ return restRequest('/rest/v1/articles?id=eq.'+articleId, {method:'PATCH', body:{status:'published', published_at:new Date().toISOString()}, prefer:'return=representation'}); }
+  function deleteArticle(articleId){ return restRequest('/rest/v1/articles?id=eq.'+articleId, {method:'DELETE'}); }
+
+  function uploadFile(bucket, file){
+    var ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+    var path = myProfile.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+    return fetch(SUPABASE_URL+'/storage/v1/object/'+bucket+'/'+path, {
+      method:'POST',
+      headers:{ apikey:SUPABASE_KEY, Authorization:'Bearer '+session.access_token, 'Content-Type': file.type || 'application/octet-stream' },
+      body:file
+    }).then(function(res){
+      if(!res.ok) return res.text().then(function(t){ throw new Error('Falha ao enviar arquivo: '+t); });
+      return SUPABASE_URL+'/storage/v1/object/public/'+bucket+'/'+path;
+    });
+  }
+
+  /* ---------- templates ---------- */
+  function cardTemplate(a){
+    var author = a.profiles || {};
+    var cat = a.category;
+    var claps = totalClaps(a);
+    var comments = (a.comments||[]).length;
+    return '<article class="card">'
+      + '<div class="card-quote">L</div>'
+      + '<div class="card-body">'
+      + '<div class="card-eyebrow">'+(cat?esc(cat.name):'Sem categoria')+'</div>'
+      + '<a href="#/artigo/'+encodeURIComponent(a.slug)+'"><h2 class="card-title">'+esc(a.title)+'</h2></a>'
+      + '<p class="card-excerpt">'+esc(a.description||a.subtitle||'')+'</p>'
+      + '<div class="card-meta">'+authorAvatar(author)
+      + '<a href="#/perfil/'+encodeURIComponent(author.username||'')+'" style="font-weight:600;color:var(--ink);">'+esc(author.full_name||author.username||'Autor')+'</a>'
+      + '<span class="dot"></span><span>'+a.read_time_minutes+' min</span>'
+      + '<span class="dot"></span><span>'+comments+' coment'+(comments===1?'ário':'ários')+'</span>'
+      + '<span class="like-count">'+likeIconSvg()+' '+claps+'</span>'
+      + '</div></div></article>';
+  }
+
+  function sidebarTemplate(){
+    return restRequest('/rest/v1/profiles?select=id,username,full_name,avatar_url&order=created_at.asc&limit=6', {useAuth:false}).catch(function(){return [];}).then(function(authors){
+      var rows = authors.map(function(a){
+        return '<a class="author-row" href="#/perfil/'+encodeURIComponent(a.username)+'">'+authorAvatar(a)
+          + '<div><div class="name">'+esc(a.full_name||a.username)+'</div><div class="count">@'+esc(a.username)+'</div></div></a>';
+      }).join('');
+      return '<aside>'
+        + '<div class="sidebar-card"><div class="section-label" style="margin-bottom:14px;">Quem escreve por aqui</div>'
+        + (rows || '<p style="color:var(--ink-faint);font-size:.85rem;">Ainda não há autores.</p>') + '</div>'
+        + '<div class="cta-card"><span class="brand-mark">L</span><h3>Tem uma ideia pra transformar em palavras?</h3>'
+        + '<p>Toda ideia solta merece virar um texto bem escrito. Este é o lugar pra começar.</p>'
+        + '<a class="btn btn-primary" href="#/escrever">Começar a escrever</a></div></aside>';
+    });
+  }
+
+  /* ---------- views ---------- */
+  function renderHome(){
+    showLoading('Carregando histórias...');
+    fetchFeed({categorySlug: state.activeCategory, query: state.query}).then(function(feed){
+      return sidebarTemplate().then(function(sidebarHtml){ return {feed:feed, sidebarHtml:sidebarHtml}; });
+    }).then(function(r){
+      var chips = '<button class="chip'+(!state.activeCategory?' active':'')+'" data-cat="">Todas</button>'
+        + CATEGORIES.map(function(c){ return '<button class="chip'+(state.activeCategory===c.slug?' active':'')+'" data-cat="'+esc(c.slug)+'">'+esc(c.name)+'</button>'; }).join('');
+      var feedHtml = r.feed.length ? r.feed.map(cardTemplate).join('') :
+        '<div class="empty-state">'+(state.query ? 'Nenhuma história encontrada para "'+esc(state.query)+'".' : 'Ainda não há histórias publicadas nessa categoria.')+'</div>';
+      app.innerHTML = '<div class="view-enter">'
+        + '<section class="hero"><div class="hero-mark">L</div>'
+        + '<h1>Ideias transformadas<br>em palavras.</h1>'
+        + '<p class="sub">Letrum é onde uma ideia solta vira um texto que faz sentido — e onde você descobre o que outras pessoas já pensaram sobre o mesmo assunto.</p>'
+        + '<a class="btn btn-primary" href="#/escrever">Começar a escrever</a></section>'
+        + '<div class="chips">'+chips+'</div>'
+        + '<div class="layout"><div><div class="feed">'+feedHtml+'</div></div>'+r.sidebarHtml+'</div></div>';
+      var si = document.getElementById('searchInput'); if(si) si.value = state.query||'';
+      Array.prototype.forEach.call(app.querySelectorAll('.chip[data-cat]'), function(chip){
+        chip.addEventListener('click', function(){ state.activeCategory = chip.getAttribute('data-cat')||null; renderHome(); });
+      });
+    }).catch(function(e){ showError('Não foi possível carregar o feed. '+e.message, renderHome); });
+  }
+
+  function renderArticle(slug){
+    showLoading('Carregando a história...');
+    var article, comments = [], myClap = 0, saved = false, following = false;
+    fetchArticleBySlug(slug).then(function(a){
+      article = a;
+      if(!article){ app.innerHTML = '<div class="empty-state" style="margin-top:60px;">Essa história não existe ou foi removida.<br><a href="#/">Voltar pra LETRUM</a></div>'; return Promise.reject('handled'); }
+      incrementViews(article.id);
+      var extra = [ fetchComments(article.id).catch(function(){return [];}) ];
+      if(session && myProfile){
+        extra.push(restRequest('/rest/v1/claps?article_id=eq.'+article.id+'&user_id=eq.'+myProfile.id+'&select=count').then(function(r){ myClap = (r[0]&&r[0].count)||0; }).catch(function(){}));
+        extra.push(isSaved(article.id).then(function(s){ saved=s; }).catch(function(){}));
+        if(article.profiles && article.profiles.id !== myProfile.id){
+          extra.push(isFollowing(myProfile.id, article.profiles.id).then(function(f){ following=f; }).catch(function(){}));
+        }
+      }
+      return Promise.all(extra);
+    }).then(function(r){
+      if(!article) return;
+      comments = r[0]||[];
+      var author = article.profiles||{};
+      var claps = totalClaps(article);
+      var tags = tagList(article);
+      var paragraphs = String(article.content||'').split(/\n+/).map(function(p){return p.trim();}).filter(Boolean);
+      var bodyHtml = paragraphs.map(function(p,i){
+        var html = '<p>'+esc(p)+'</p>';
+        if(i===1 && paragraphs.length>2){ var firstSentence = p.split('. ')[0]; return '<div class="pull-quote">'+esc(firstSentence)+'.</div>'+html; }
+        return html;
+      }).join('');
+      var tagsHtml = tags.length ? '<div class="chips" style="margin:18px 0 0;">'+tags.map(function(t){return '<span class="chip" style="cursor:default;">'+esc(t.name)+'</span>';}).join('')+'</div>' : '';
+      var responsesHtml = comments.map(function(c){
+        return '<div class="response">'+authorAvatar(c.profiles)+'<div><div class="name">'+esc((c.profiles&&(c.profiles.full_name||c.profiles.username))||'Usuário')+'</div><div class="text">'+esc(c.body)+'</div></div></div>';
+      }).join('');
+      var followBtnHtml = '';
+      if(session && myProfile && author.id && author.id !== myProfile.id){
+        followBtnHtml = '<button class="btn '+(following?'btn-ghost':'btn-primary')+'" id="followBtn" style="margin-left:auto;">'+(following?'Seguindo':'Seguir')+'</button>';
+      } else if(!session){
+        followBtnHtml = '<a class="btn btn-ghost" href="#/entrar" style="margin-left:auto;">Seguir</a>';
+      }
+      app.innerHTML = '<div class="article-wrap view-enter">'
+        + '<a class="back-link" href="#/">&larr; Voltar pra LETRUM</a>'
+        + '<div class="article-eyebrow">'+(article.category?esc(article.category.name):'Sem categoria')+'</div>'
+        + '<h1 class="article-title">'+esc(article.title)+'</h1>'
+        + (article.subtitle ? '<p style="font-family:var(--font-display);font-style:italic;color:var(--ink-soft);font-size:1.15rem;margin:0 0 22px;">'+esc(article.subtitle)+'</p>' : '')
+        + '<div class="byline">'+authorAvatar(author,'lg')
+        + '<div class="who"><div class="name"><a href="#/perfil/'+encodeURIComponent(author.username||'')+'">'+esc(author.full_name||author.username||'Autor')+'</a></div>'
+        + '<div class="meta">'+article.read_time_minutes+' min de leitura · '+(article.views_count+1)+' visualizações</div></div>'
+        + followBtnHtml + '</div>'
+        + '<div class="article-body" id="articleBody">'+(bodyHtml || '<p style="color:var(--ink-faint);">Este artigo ainda não tem conteúdo.</p>')+'</div>'
+        + tagsHtml
+        + '<div class="engage-bar"><button class="like-btn '+(myClap>0?'liked':'')+'" id="clapBtn">'+likeIconSvg()+' <span id="clapCount">'+claps+'</span> Isso me tocou'+(myClap?' (você: '+myClap+')':'')+'</button>'
+        + '<button class="btn btn-ghost" id="saveBtn">'+(saved?'Salvo':'Salvar')+'</button>'
+        + '<span class="responses-count">'+comments.length+' resposta'+(comments.length===1?'':'s')+'</span></div>'
+        + '<div class="responses"><h3>Quem também quis dizer algo</h3>'
+        + '<div id="responsesList">'+(responsesHtml || '<p style="color:var(--ink-faint);font-size:.9rem;">Ainda ninguém respondeu. Seja a primeira pessoa.</p>')+'</div>'
+        + (session ? '<form class="response-form" id="responseForm"><label style="font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);">Deixe uma resposta</label>'
+            + '<textarea id="responseText" placeholder="O que essa história fez você lembrar?"></textarea><button class="btn btn-primary" type="submit">Responder</button></form>'
+          : '<p class="hint" style="margin-top:16px;"><a href="#/entrar">Entre</a> pra deixar uma resposta.</p>')
+        + '</div></div>';
+
+      bindArticleEvents(article, {myClap:myClap, following:following});
+      setupProgressBar();
+    }).catch(function(e){ if(e!=='handled') showError('Não foi possível carregar esta história. '+(e&&e.message||''), function(){renderArticle(slug);}); });
+  }
+
+  function bindArticleEvents(a, initial){
+    var myClap = initial.myClap, following = initial.following;
+    var clapBtn = document.getElementById('clapBtn');
+    if(clapBtn) clapBtn.addEventListener('click', function(){
+      if(!session){ location.hash='#/entrar'; return; }
+      if(myClap>=50) return;
+      clapBtn.disabled = true;
+      clapArticle(a.id).then(function(newCount){
+        var el = document.getElementById('clapCount');
+        var delta = newCount - myClap;
+        myClap = newCount;
+        el.textContent = parseInt(el.textContent,10)+delta;
+        clapBtn.classList.add('liked');
+        clapBtn.innerHTML = likeIconSvg()+' <span id="clapCount">'+el.textContent+'</span> Isso me tocou (você: '+myClap+')';
+      }).catch(function(e){ showToast(e.message); }).then(function(){ clapBtn.disabled=false; });
+    });
+    var saveBtn = document.getElementById('saveBtn');
+    if(saveBtn) saveBtn.addEventListener('click', function(){
+      if(!session){ location.hash='#/entrar'; return; }
+      toggleSave(a.id).then(function(saved){
+        saveBtn.textContent = saved?'Salvo':'Salvar';
+        showToast(saved?'História salva na sua lista':'Removida da sua lista');
+      }).catch(function(e){ showToast(e.message); });
+    });
+    var followBtn = document.getElementById('followBtn');
+    if(followBtn) followBtn.addEventListener('click', function(){
+      toggleFollow(a.profiles.id).then(function(now){
+        following = now;
+        followBtn.textContent = now?'Seguindo':'Seguir';
+        followBtn.className = 'btn '+(now?'btn-ghost':'btn-primary');
+        followBtn.style.marginLeft = 'auto';
+      }).catch(function(e){ showToast(e.message); });
+    });
+    var form = document.getElementById('responseForm');
+    if(form) form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var ta = document.getElementById('responseText');
+      var text = ta.value.trim();
+      if(!text) return;
+      postComment(a.id, text).then(function(){
+        var list = document.getElementById('responsesList');
+        var empty = list.querySelector('p'); if(empty) empty.remove();
+        var row = document.createElement('div');
+        row.className = 'response';
+        row.innerHTML = authorAvatar(myProfile)+'<div><div class="name">'+esc(myProfile.full_name||myProfile.username)+'</div><div class="text">'+esc(text)+'</div></div>';
+        list.appendChild(row);
+        ta.value = '';
+        showToast('Resposta publicada');
+      }).catch(function(e){ showToast(e.message); });
+    });
+  }
+
+  function setupProgressBar(){
+    progressBar.style.display = 'block';
+    function onScroll(){
+      var body = document.getElementById('articleBody');
+      if(!body){ window.removeEventListener('scroll', onScroll); progressBar.style.display='none'; return; }
+      var rect = body.getBoundingClientRect();
+      var total = rect.height - window.innerHeight*0.5;
+      var scrolled = Math.min(Math.max(-rect.top,0), Math.max(total,1));
+      var pct = total>0 ? (scrolled/total)*100 : 100;
+      progressBar.style.width = Math.min(pct,100)+'%';
+    }
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+  }
+
+  function renderProfile(username){
+    showLoading('Carregando perfil...');
+    fetchProfileByUsername(username).then(function(profile){
+      if(!profile){ app.innerHTML = '<div class="empty-state" style="margin-top:60px;">Esse perfil não existe.<br><a href="#/">Voltar pra LETRUM</a></div>'; return; }
+      return Promise.all([
+        fetchArticlesByAuthor(profile.id, true).catch(function(){return [];}),
+        fetchFollowCounts(profile.id).catch(function(){return {followers:0,following:0};}),
+        (session && myProfile && myProfile.id!==profile.id) ? isFollowing(myProfile.id, profile.id).catch(function(){return false;}) : Promise.resolve(false)
+      ]).then(function(r){
+        var articles = r[0], counts = r[1], following = r[2];
+        var feedHtml = articles.length ? articles.map(cardTemplate).join('') : '<div class="empty-state">'+esc(profile.full_name||profile.username)+' ainda não publicou nenhuma história.</div>';
+        var actionHtml = '';
+        if(myProfile && myProfile.id===profile.id) actionHtml = '<a class="btn btn-ghost" href="#/configuracoes">Editar perfil</a>';
+        else if(session) actionHtml = '<button class="btn '+(following?'btn-ghost':'btn-primary')+'" id="followBtnProfile">'+(following?'Seguindo':'Seguir')+'</button>';
+        else actionHtml = '<a class="btn btn-primary" href="#/entrar">Seguir</a>';
+        app.innerHTML = '<div class="view-enter">'
+          + '<a class="back-link" href="#/" style="margin-top:32px;display:inline-flex;">&larr; Voltar pra LETRUM</a>'
+          + '<div class="profile-head">'+authorAvatar(profile,'lg')
+          + '<div style="flex:1;min-width:200px;"><h1>'+esc(profile.full_name||profile.username)+'</h1>'
+          + '<p class="bio">'+esc(profile.bio||'Ainda sem biografia.')+'</p>'
+          + '<div class="profile-stats"><span><b>'+articles.length+'</b> histórias</span><span><b>'+counts.followers+'</b> seguidores</span><span><b>'+counts.following+'</b> seguindo</span></div></div>'
+          + actionHtml + '</div>'
+          + '<div class="section-label">Histórias de '+esc((profile.full_name||profile.username).split(' ')[0])+'</div>'
+          + '<div class="feed">'+feedHtml+'</div></div>';
+        var fb = document.getElementById('followBtnProfile');
+        if(fb) fb.addEventListener('click', function(){
+          toggleFollow(profile.id).then(function(now){
+            fb.textContent = now?'Seguindo':'Seguir';
+            fb.className = 'btn '+(now?'btn-ghost':'btn-primary');
+          }).catch(function(e){ showToast(e.message); });
+        });
+      });
+    }).catch(function(e){ showError('Não foi possível carregar o perfil. '+e.message, function(){renderProfile(username);}); });
+  }
+
+  function renderWrite(){
+    if(!session){ showToast('Entre para escrever uma história'); location.hash='#/entrar'; return; }
+    var catOptions = CATEGORIES.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+    app.innerHTML = '<div class="write-wrap view-enter">'
+      + '<h1>Transforme sua ideia em palavras</h1><p class="hint">Ninguém vê enquanto você escreve. Publique só quando estiver pronto.</p>'
+      + '<form id="writeForm">'
+      + '<div class="field"><input class="title-input" id="wTitle" type="text" placeholder="Título da sua história" required></div>'
+      + '<div class="field"><input class="title-input" id="wSubtitle" type="text" placeholder="Subtítulo (opcional)" style="font-size:1.05rem;font-weight:400;font-style:italic;"></div>'
+      + '<div class="field" style="display:flex;gap:14px;flex-wrap:wrap;">'
+      + '<div style="flex:1;min-width:180px;"><label>Categoria</label><select class="tag-select" id="wCategory"><option value="">Sem categoria</option>'+catOptions+'</select></div>'
+      + '<div style="flex:1;min-width:180px;"><label>Imagem de capa (opcional)</label><input type="file" id="wCover" accept="image/*"></div></div>'
+      + '<div class="field"><label>Tags (até 5, separadas por vírgula)</label><input class="tag-select" id="wTags" type="text" style="width:100%;" placeholder="ex: carreira, autoconhecimento"></div>'
+      + '<div class="field"><label>Descrição curta (aparece no feed)</label><input class="tag-select" id="wDescription" type="text" style="width:100%;" maxlength="200" placeholder="Uma ou duas frases sobre a sua história"></div>'
+      + '<div class="field"><label>Sua história</label><textarea class="body-textarea" id="wBody" placeholder="Comece por onde for mais fácil. Separe parágrafos com uma linha em branco." required></textarea></div>'
+      + '<div class="field"><label>Agendar publicação (opcional)</label><input class="tag-select" id="wSchedule" type="datetime-local"></div>'
+      + '<div class="write-actions"><a class="btn btn-ghost" href="#/">Cancelar</a>'
+      + '<button class="btn btn-ghost" type="button" data-status="draft">Salvar rascunho</button>'
+      + '<button class="btn btn-primary" type="button" data-status="publish">Publicar</button></div>'
+      + '</form></div>';
+
+    Array.prototype.forEach.call(document.querySelectorAll('#writeForm button[data-status]'), function(btn){
+      btn.addEventListener('click', function(){
+        var title = document.getElementById('wTitle').value.trim();
+        var bodyText = document.getElementById('wBody').value.trim();
+        if(!title || !bodyText){ showToast('Escreva um título e o texto antes de continuar'); return; }
+        var wantsStatus = btn.getAttribute('data-status');
+        var scheduleVal = document.getElementById('wSchedule').value;
+        var status = wantsStatus==='publish' ? 'published' : 'draft';
+        var scheduledAt = null;
+        if(wantsStatus==='publish' && scheduleVal){
+          var d = new Date(scheduleVal);
+          if(d.getTime() > Date.now()){ status='scheduled'; scheduledAt = d.toISOString(); }
+        }
+        btn.disabled = true;
+        var original = btn.textContent; btn.textContent = 'Salvando...';
+        var fileInput = document.getElementById('wCover');
+        var uploadPromise = fileInput.files[0] ? uploadFile('article-covers', fileInput.files[0]) : Promise.resolve(null);
+        uploadPromise.then(function(coverUrl){
+          var tagNames = document.getElementById('wTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+          return createArticle({
+            title: title, subtitle: document.getElementById('wSubtitle').value.trim(),
+            description: document.getElementById('wDescription').value.trim(), content: bodyText,
+            categoryId: document.getElementById('wCategory').value || null,
+            tagNames: tagNames, status: status, coverUrl: coverUrl, scheduledAt: scheduledAt
+          });
+        }).then(function(created){
+          showToast(status==='published' ? 'História publicada!' : status==='scheduled' ? 'História agendada!' : 'Rascunho salvo!');
+          location.hash = status==='published' ? '#/artigo/'+created.slug : '#/painel';
+        }).catch(function(err){ showToast('Erro ao salvar: '+err.message); btn.disabled=false; btn.textContent=original; });
+      });
+    });
+  }
+
+  function renderDashboard(){
+    if(!session){ location.hash='#/entrar'; return; }
+    showLoading('Carregando seu painel...');
+    fetchMyArticlesAll().then(function(articles){
+      var totalViews = articles.reduce(function(s,a){return s+a.views_count;},0);
+      var totalClapsSum = articles.reduce(function(s,a){return s+totalClaps(a);},0);
+      var totalComments = articles.reduce(function(s,a){return s+(a.comments||[]).length;},0);
+      var maxViews = Math.max.apply(null, [1].concat(articles.map(function(a){return a.views_count;})));
+
+      var rows = articles.length ? articles.map(function(a){
+        return '<tr><td>'+(a.status==='published' ? '<a href="#/artigo/'+encodeURIComponent(a.slug)+'" style="font-weight:600;">'+esc(a.title)+'</a>' : '<span style="font-weight:600;">'+esc(a.title)+'</span>')
+          + '<div style="font-size:.76rem;color:var(--ink-faint);">'+statusLabel(a.status)+'</div></td>'
+          + '<td>'+a.views_count+'</td><td>'+totalClaps(a)+'</td><td>'+(a.comments||[]).length+'</td>'
+          + '<td>'+(a.status!=='published' ? '<button class="btn btn-ghost btn-sm" data-publish="'+a.id+'">Publicar agora</button> ' : '')
+          + '<button class="btn btn-ghost btn-sm" data-delete="'+a.id+'">Excluir</button></td></tr>';
+      }).join('') : '<tr><td colspan="5" style="padding:22px 4px;color:var(--ink-faint);">Você ainda não escreveu nenhuma história. <a href="#/escrever">Comece agora</a>.</td></tr>';
+
+      var bars = articles.slice(0,8).map(function(a){
+        var label = a.title.length>26 ? a.title.slice(0,26)+'…' : a.title;
+        return '<div class="bar-row"><div class="bar-label">'+esc(label)+'</div>'
+          + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.round((a.views_count/maxViews)*100)+'%"></div></div>'
+          + '<div class="bar-value">'+a.views_count+'</div></div>';
+      }).join('');
+
+      app.innerHTML = '<div class="write-wrap view-enter" style="max-width:900px;">'
+        + '<h1 style="font-style:normal;">Painel do escritor</h1><p class="hint">Um retrato simples do que você já publicou.</p>'
+        + '<div class="stat-grid">'
+        + '<div class="stat-card"><div class="stat-value">'+articles.length+'</div><div class="stat-label">Histórias</div></div>'
+        + '<div class="stat-card"><div class="stat-value">'+totalViews+'</div><div class="stat-label">Visualizações</div></div>'
+        + '<div class="stat-card"><div class="stat-value">'+totalClapsSum+'</div><div class="stat-label">Aplausos</div></div>'
+        + '<div class="stat-card"><div class="stat-value">'+totalComments+'</div><div class="stat-label">Respostas</div></div></div>'
+        + (articles.length ? '<div class="section-label" style="margin-top:32px;">Visualizações por história</div><div class="bar-chart">'+bars+'</div>' : '')
+        + '<div class="section-label" style="margin-top:32px;">Suas histórias</div>'
+        + '<div class="dash-table"><table class="dash-table"><thead><tr><th>Título</th><th>Vistas</th><th>Aplausos</th><th>Respostas</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+        + '</div>';
+
+      Array.prototype.forEach.call(app.querySelectorAll('[data-publish]'), function(btn){
+        btn.addEventListener('click', function(){ publishNow(btn.getAttribute('data-publish')).then(function(){ showToast('História publicada!'); renderDashboard(); }).catch(function(e){ showToast(e.message); }); });
+      });
+      Array.prototype.forEach.call(app.querySelectorAll('[data-delete]'), function(btn){
+        btn.addEventListener('click', function(){
+          if(!confirm('Excluir esta história? Essa ação não pode ser desfeita.')) return;
+          deleteArticle(btn.getAttribute('data-delete')).then(function(){ showToast('História excluída'); renderDashboard(); }).catch(function(e){ showToast(e.message); });
+        });
+      });
+    }).catch(function(e){ showError('Não foi possível carregar o painel. '+e.message, renderDashboard); });
+  }
+
+  function renderSaved(){
+    if(!session){ location.hash='#/entrar'; return; }
+    showLoading('Carregando sua lista...');
+    fetchSavedArticles().then(function(articles){
+      app.innerHTML = '<div class="view-enter"><div class="section-label" style="margin-top:36px;">Sua lista de leitura</div>'
+        + '<div class="feed">'+(articles.length ? articles.map(cardTemplate).join('') : '<div class="empty-state">Você ainda não salvou nenhuma história.</div>')+'</div></div>';
+    }).catch(function(e){ showError('Não foi possível carregar sua lista. '+e.message, renderSaved); });
+  }
+
+  function renderSettings(){
+    if(!session){ location.hash='#/entrar'; return; }
+    app.innerHTML = '<div class="write-wrap view-enter">'
+      + '<h1 style="font-style:normal;">Editar perfil</h1>'
+      + '<form id="settingsForm">'
+      + '<div class="field"><label>Nome completo</label><input class="tag-select" id="sName" style="width:100%;" value="'+esc(myProfile.full_name||'')+'"></div>'
+      + '<div class="field"><label>Biografia</label><textarea class="body-textarea" id="sBio" style="min-height:110px;font-family:var(--font-ui);font-size:.94rem;">'+esc(myProfile.bio||'')+'</textarea></div>'
+      + '<div class="field"><label>Foto de perfil</label><input type="file" id="sAvatar" accept="image/*"></div>'
+      + '<div class="write-actions"><button class="btn btn-primary" type="submit">Salvar alterações</button></div>'
+      + '</form></div>';
+    document.getElementById('settingsForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var f = document.getElementById('sAvatar').files[0];
+      (f ? uploadFile('avatars', f) : Promise.resolve(myProfile.avatar_url)).then(function(avatarUrl){
+        var body = { full_name: document.getElementById('sName').value.trim(), bio: document.getElementById('sBio').value.trim(), avatar_url: avatarUrl };
+        return restRequest('/rest/v1/profiles?id=eq.'+myProfile.id, {method:'PATCH', body:body, prefer:'return=representation'}).then(function(){
+          myProfile = Object.assign({}, myProfile, body);
+          showToast('Perfil atualizado');
+          renderNav();
+          location.hash = '#/perfil/'+myProfile.username;
+        });
+      }).catch(function(err){ showToast('Erro: '+err.message); });
+    });
+  }
+
+  function renderLogin(){
+    app.innerHTML = '<div class="write-wrap view-enter" style="max-width:420px;"><div class="auth-card">'
+      + '<span class="brand-mark">L</span><h1 style="font-style:italic;">Entrar</h1>'
+      + '<p class="hint">Use uma conta de demonstração ou a sua.</p>'
+      + '<form id="loginForm"><div class="field"><label>E-mail</label><input class="tag-select" id="lEmail" type="email" style="width:100%;" required></div>'
+      + '<div class="field"><label>Senha</label><input class="tag-select" id="lPassword" type="password" style="width:100%;" required></div>'
+      + '<button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;">Entrar</button></form>'
+      + '<button class="btn btn-ghost" id="googleBtn" type="button" style="width:100%;justify-content:center;margin-top:10px;">Entrar com Google</button>'
+      + '<p class="hint" style="margin-top:18px;">Não tem conta? <a href="#/criar-conta">Criar conta</a></p>'
+      + '<p class="hint" style="font-size:.76rem;">Demo: marina@medemo.app · heitor@medemo.app · aline@medemo.app · diego@medemo.app · julia@medemo.app · camila@medemo.app · bruno@medemo.app — senha: demo12345</p>'
+      + '</div></div>';
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type=submit]'); btn.disabled=true;
+      signIn({email:document.getElementById('lEmail').value.trim(), password:document.getElementById('lPassword').value}).then(function(){
+        showToast('Bem-vindo(a) de volta!'); renderNav(); location.hash='#/';
+      }).catch(function(err){ showToast('Não foi possível entrar: '+err.message); btn.disabled=false; });
+    });
+    document.getElementById('googleBtn').addEventListener('click', function(){ showToast('Login com Google ainda não configurado neste protótipo.'); });
+  }
+
+  function renderSignup(){
+    app.innerHTML = '<div class="write-wrap view-enter" style="max-width:420px;"><div class="auth-card">'
+      + '<span class="brand-mark">L</span><h1 style="font-style:italic;">Criar conta</h1>'
+      + '<form id="signupForm">'
+      + '<div class="field"><label>Nome completo</label><input class="tag-select" id="suName" style="width:100%;" required></div>'
+      + '<div class="field"><label>Nome de usuário</label><input class="tag-select" id="suUsername" style="width:100%;" required pattern="[a-z0-9._-]+" title="Letras minúsculas, números, pontos e traços"></div>'
+      + '<div class="field"><label>E-mail</label><input class="tag-select" id="suEmail" type="email" style="width:100%;" required></div>'
+      + '<div class="field"><label>Senha (mín. 6 caracteres)</label><input class="tag-select" id="suPassword" type="password" minlength="6" style="width:100%;" required></div>'
+      + '<button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;">Criar conta</button></form>'
+      + '<p class="hint" style="margin-top:18px;">Já tem conta? <a href="#/entrar">Entrar</a></p></div></div>';
+    document.getElementById('signupForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type=submit]'); btn.disabled=true;
+      signUp({
+        email: document.getElementById('suEmail').value.trim(),
+        password: document.getElementById('suPassword').value,
+        username: document.getElementById('suUsername').value.trim().toLowerCase(),
+        fullName: document.getElementById('suName').value.trim()
+      }).then(function(result){
+        if(result.confirmed){ showToast('Conta criada! Bem-vindo(a).'); renderNav(); location.hash='#/'; }
+        else { showToast('Conta criada. Verifique seu e-mail para confirmar o acesso.'); location.hash='#/entrar'; }
+      }).catch(function(err){ showToast('Erro ao criar conta: '+err.message); btn.disabled=false; });
+    });
+  }
+
+  /* ---------- nav / router ---------- */
+  function renderNav(){
+    var el = document.getElementById('navActions');
+    if(session && myProfile){
+      el.innerHTML = '<a class="nav-link" href="#/escrever">Escrever</a>'
+        + '<div class="dropdown"><button class="avatar-btn" id="avatarBtn" type="button">'+authorAvatar(myProfile)+'</button>'
+        + '<div class="dropdown-menu" id="dropdownMenu">'
+        + '<a href="#/perfil/'+encodeURIComponent(myProfile.username)+'">Meu perfil</a>'
+        + '<a href="#/painel">Painel do escritor</a>'
+        + '<a href="#/salvos">Salvos</a>'
+        + '<a href="#/configuracoes">Configurações</a>'
+        + '<button class="logout" id="logoutBtn" type="button">Sair</button></div></div>';
+      document.getElementById('avatarBtn').addEventListener('click', function(e){ e.stopPropagation(); document.getElementById('dropdownMenu').classList.toggle('open'); });
+      document.getElementById('logoutBtn').addEventListener('click', function(){ signOut(); showToast('Você saiu.'); renderNav(); location.hash='#/'; });
+    } else {
+      el.innerHTML = '<a class="nav-link" href="#/entrar">Entrar</a><a class="btn btn-primary" href="#/criar-conta" style="padding:9px 18px;">Criar conta</a>';
+    }
+  }
+  document.addEventListener('click', function(){ var m = document.getElementById('dropdownMenu'); if(m) m.classList.remove('open'); });
+
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    theme = theme==='light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    this.textContent = theme==='light' ? '🌙' : '☀️';
+  });
+
+  document.getElementById('searchInput').addEventListener('input', debounce(function(){
+    state.query = this.value;
+    if(location.hash && location.hash!=='#/'){ location.hash='#/'; } else { renderHome(); }
+  }, 350));
+
+  function route(){
+    var hash = location.hash || '#/';
+    progressBar.style.display = 'none';
+    window.scrollTo(0,0);
+    renderNav();
+    if(hash.indexOf('#/artigo/')===0) return renderArticle(decodeURIComponent(hash.replace('#/artigo/','')));
+    if(hash.indexOf('#/perfil/')===0) return renderProfile(decodeURIComponent(hash.replace('#/perfil/','')));
+    if(hash==='#/escrever') return renderWrite();
+    if(hash==='#/painel') return renderDashboard();
+    if(hash==='#/salvos') return renderSaved();
+    if(hash==='#/configuracoes') return renderSettings();
+    if(hash==='#/entrar') return renderLogin();
+    if(hash==='#/criar-conta') return renderSignup();
+    return renderHome();
+  }
+
+  function init(){
+    showLoading('Carregando LETRUM...');
+    fetchCategories().catch(function(){}).then(function(){
+      window.addEventListener('hashchange', route);
+      route();
+    });
+  }
+  init();
+})();
+</script>
+</body>
+</html>
