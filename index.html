@@ -219,7 +219,7 @@
 
   var SUPABASE_URL = 'https://esjxazzrxamgaxpwbtai.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_xO0zuYAnTaaPhlzGkXWMYw_fXJbw3Yv';
-  var POST_SELECT = 'id,body,image_url,like_count,repost_count,reply_count,created_at,parent_post_id,author_id,profiles!posts_author_id_fkey(id,username,full_name,avatar_url),parent:posts!posts_parent_post_id_fkey(id,profiles!posts_author_id_fkey(username))';
+  var POST_SELECT = 'id,body,image_url,like_count,repost_count,reply_count,created_at,parent_post_id,author_id,profiles!posts_author_id_fkey(id,username,full_name,avatar_url)';
   var PALETTE = ['#3B3B78','#C98A3E','#4B6B58','#3E5C76','#9C3B4B','#5B4B8A','#2F6F6A'];
   var MAX_LEN = 280;
 
@@ -393,7 +393,7 @@
     opts = opts || {};
     var author = p.profiles || {};
     var liked = !!opts.liked, reposted = !!opts.reposted, saved = !!opts.saved;
-    var replyCtx = (p.parent_post_id && p.parent) ? '<div class="post-reply-context">Respondendo a <a href="#/post/'+esc(p.parent.id)+'">@'+esc((p.parent.profiles&&p.parent.profiles.username)||'')+'</a></div>' : '';
+    var replyCtx = (p.parent_post_id && opts.parentUsername) ? '<div class="post-reply-context">Respondendo a <a href="#/post/'+esc(p.parent_post_id)+'">@'+esc(opts.parentUsername)+'</a></div>' : '';
     var img = p.image_url ? '<div class="post-image"><img src="'+esc(p.image_url)+'" alt="" loading="lazy"></div>' : '';
     return '<article class="post" data-post-id="'+esc(p.id)+'">'
       + authorAvatar(author)
@@ -456,17 +456,29 @@
     bindActionButtons(container, byId, function(id){ location.hash = '#/post/'+id; });
   }
 
+  function bulkParentUsernames(posts){
+    var parentIds = Array.from(new Set(posts.filter(function(p){return p.parent_post_id;}).map(function(p){return p.parent_post_id;})));
+    if(!parentIds.length) return Promise.resolve({});
+    return restRequest('/rest/v1/posts?id=in.('+parentIds.join(',')+')&select=id,profiles!posts_author_id_fkey(username)', {useAuth:false})
+      .then(function(rows){
+        var map = {}; rows.forEach(function(r){ map[r.id] = r.profiles && r.profiles.username; }); return map;
+      }).catch(function(){ return {}; });
+  }
+
   function decorateFeed(posts){
-    if(!session || !myProfile || !posts.length) return Promise.resolve({liked:{}, reposted:{}, saved:{}});
+    if(!posts.length) return Promise.resolve({liked:{}, reposted:{}, saved:{}, parentUsernames:{}});
     var ids = posts.map(function(p){return p.id;});
-    return Promise.all([
-      bulkMembership('likes', ids), bulkMembership('reposts', ids), bulkMembership('saved_posts', ids)
-    ]).then(function(r){ return {liked:r[0], reposted:r[1], saved:r[2]}; });
+    var membershipPromise = (session && myProfile)
+      ? Promise.all([bulkMembership('likes', ids), bulkMembership('reposts', ids), bulkMembership('saved_posts', ids)])
+      : Promise.resolve([{}, {}, {}]);
+    return Promise.all([membershipPromise, bulkParentUsernames(posts)]).then(function(r){
+      return {liked:r[0][0], reposted:r[0][1], saved:r[0][2], parentUsernames:r[1]};
+    });
   }
 
   function renderPostList(container, posts, deco){
     container.innerHTML = posts.map(function(p){
-      return postTemplate(p, {liked:deco.liked[p.id], reposted:deco.reposted[p.id], saved:deco.saved[p.id]});
+      return postTemplate(p, {liked:deco.liked[p.id], reposted:deco.reposted[p.id], saved:deco.saved[p.id], parentUsername: deco.parentUsernames[p.parent_post_id]});
     }).join('');
     bindFeedEvents(container, posts);
   }
@@ -593,7 +605,7 @@
       return decorateFeed(all);
     }).then(function(deco){
       var author = post.profiles || {};
-      var replyCtx = (post.parent_post_id && post.parent) ? '<div class="post-reply-context">Respondendo a <a href="#/post/'+esc(post.parent.id)+'">@'+esc((post.parent.profiles&&post.parent.profiles.username)||'')+'</a></div>' : '';
+      var replyCtx = (post.parent_post_id && deco.parentUsernames[post.parent_post_id]) ? '<div class="post-reply-context">Respondendo a <a href="#/post/'+esc(post.parent_post_id)+'">@'+esc(deco.parentUsernames[post.parent_post_id])+'</a></div>' : '';
       var img = post.image_url ? '<div class="post-image"><img src="'+esc(post.image_url)+'" alt=""></div>' : '';
       var liked = !!deco.liked[post.id], reposted = !!deco.reposted[post.id], saved = !!deco.saved[post.id];
       app.innerHTML = '<div class="view-enter">'
