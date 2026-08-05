@@ -938,13 +938,11 @@
   function renderLogin(){
     app.innerHTML = '<div class="write-wrap view-enter" style="max-width:420px;"><div class="auth-card">'
       + '<span class="brand-mark">L</span><h1>Entrar</h1>'
-      + '<p class="hint">Use uma conta de demonstração ou a sua.</p>'
       + '<form id="loginForm"><div class="field"><label>E-mail</label><input class="tag-select" id="lEmail" type="email" style="width:100%;" required></div>'
       + '<div class="field"><label>Senha</label><input class="tag-select" id="lPassword" type="password" style="width:100%;" required></div>'
       + '<button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;">Entrar</button></form>'
       + '<button class="btn btn-ghost" id="googleBtn" type="button" style="width:100%;justify-content:center;margin-top:10px;">Entrar com Google</button>'
       + '<p class="hint" style="margin-top:18px;">Não tem conta? <a href="#/criar-conta">Criar conta</a></p>'
-      + '<p class="hint" style="font-size:.76rem;">Demo: marina@medemo.app · heitor@medemo.app · aline@medemo.app · diego@medemo.app · julia@medemo.app · camila@medemo.app · bruno@medemo.app — senha: demo12345</p>'
       + '</div></div>';
     document.getElementById('loginForm').addEventListener('submit', function(e){
       e.preventDefault();
