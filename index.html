@@ -114,6 +114,11 @@
   .avatar.lg{width:64px;height:64px;font-size:1.3rem;}
   .card-meta .dot::before{content:"·";margin:0 2px;}
   .card-meta .like-count{margin-left:auto;display:flex;align-items:center;gap:5px;}
+  .article-cover{margin:0 0 32px;border-radius:12px;overflow:hidden;}
+  .article-cover img{width:100%;display:block;}
+  .card-thumb{width:120px;height:120px;flex-shrink:0;border-radius:10px;overflow:hidden;background:var(--line);}
+  .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  @media (max-width:640px){.card-thumb{width:84px;height:84px;}}
 
   .empty-state{padding:60px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-display);font-size:1.15rem;font-style:italic;line-height:1.6;}
   .state-msg{padding:80px 20px;text-align:center;color:var(--ink-faint);font-family:var(--font-ui);}
@@ -474,6 +479,7 @@
     var cat = a.category;
     var claps = totalClaps(a);
     var comments = (a.comments||[]).length;
+    var thumb = a.cover_image_url ? '<div class="card-thumb"><img src="'+esc(a.cover_image_url)+'" alt="" loading="lazy"></div>' : '';
     return '<article class="card">'
       + '<div class="card-quote">L</div>'
       + '<div class="card-body">'
@@ -485,7 +491,7 @@
       + '<span class="dot"></span><span>'+a.read_time_minutes+' min</span>'
       + '<span class="dot"></span><span>'+comments+' coment'+(comments===1?'ário':'ários')+'</span>'
       + '<span class="like-count">'+likeIconSvg()+' '+claps+'</span>'
-      + '</div></div></article>';
+      + '</div></div>'+thumb+'</article>';
   }
 
   function sidebarTemplate(){
@@ -605,6 +611,7 @@
         + '<div class="who"><div class="name"><a href="#/perfil/'+encodeURIComponent(author.username||'')+'">'+esc(author.full_name||author.username||'Autor')+'</a></div>'
         + '<div class="meta">'+article.read_time_minutes+' min de leitura · '+(article.views_count+1)+' visualizações</div></div>'
         + followBtnHtml + '</div>'
+        + (article.cover_image_url ? '<div class="article-cover"><img src="'+esc(article.cover_image_url)+'" alt=""></div>' : '')
         + '<div class="article-body" id="articleBody">'+(bodyHtml || '<p style="color:var(--ink-faint);">Este artigo ainda não tem conteúdo.</p>')+'</div>'
         + tagsHtml
         + '<div class="engage-bar"><button class="like-btn '+(myClap>0?'liked':'')+'" id="clapBtn">'+likeIconSvg()+' <span id="clapCount">'+claps+'</span> Isso me tocou'+(myClap?' (você: '+myClap+')':'')+'</button>'
@@ -817,7 +824,9 @@
       confirmBtn.textContent = this.checked ? 'Agendar publicação' : 'Publicar agora';
     });
 
+    var submitted = false;
     confirmBtn.addEventListener('click', function(){
+      if(submitted) return;
       var wantsSchedule = scheduleToggle.checked;
       var scheduleVal = document.getElementById('mSchedule').value;
       var status = 'published';
@@ -828,7 +837,9 @@
         if(d.getTime() <= Date.now()){ showToast('Escolha um horário no futuro'); return; }
         status = 'scheduled'; scheduledAt = d.toISOString();
       }
+      submitted = true;
       var btn = this; btn.disabled = true; var original = btn.textContent; btn.textContent = wantsSchedule ? 'Agendando...' : 'Publicando...';
+      overlay.style.pointerEvents = 'none';
       var tagNames = document.getElementById('mTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
       createArticle({
         title: draft.title, subtitle: '', description: document.getElementById('mDescription').value.trim(),
@@ -838,7 +849,7 @@
         overlay.remove();
         showToast(status==='published' ? 'História publicada!' : 'História agendada!');
         location.hash = status==='published' ? '#/artigo/'+created.slug : '#/painel';
-      }).catch(function(err){ showToast('Erro ao publicar: '+err.message); btn.disabled=false; btn.textContent=original; });
+      }).catch(function(err){ showToast('Erro ao publicar: '+err.message); submitted=false; btn.disabled=false; btn.textContent=original; overlay.style.pointerEvents=''; });
     });
   }
 
