@@ -78,6 +78,18 @@
   .hero h1{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.15;max-width:740px;margin:0 0 16px;position:relative;}
   .hero p.sub{font-family:var(--font-ui);color:var(--ink-soft);font-size:1.02rem;max-width:520px;margin:0 0 22px;position:relative;}
 
+  .landing-features{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin:64px 0 56px;padding-top:48px;border-top:1px solid var(--line);}
+  @media (max-width:860px){.landing-features{grid-template-columns:1fr;gap:28px;}}
+  .feature-card h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin:0 0 8px;}
+  .feature-card p{color:var(--ink-soft);font-size:.93rem;line-height:1.6;margin:0;}
+
+  .landing-cta-band{margin:56px 0 40px;padding:52px 40px;background:var(--ink);color:var(--paper);border-radius:var(--radius);text-align:center;}
+  .landing-cta-band h2{font-family:var(--font-display);font-weight:600;font-size:1.6rem;margin:0 0 10px;}
+  .landing-cta-band p{opacity:.75;margin:0 0 22px;font-size:.95rem;}
+  .landing-cta-band .btn-primary{background:var(--paper);color:var(--ink);}
+  .landing-cta-band .btn-primary:hover{opacity:.85;}
+  @media (max-width:640px){.landing-cta-band{padding:36px 24px;}}
+
   .layout{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:start;}
   @media (max-width:860px){.layout{grid-template-columns:1fr;}}
 
@@ -494,6 +506,34 @@
 
   /* ---------- views ---------- */
   function renderHome(){
+    if(!session){ return renderLandingHome(); }
+    return renderFeedHome();
+  }
+
+  function renderLandingHome(){
+    var catChips = CATEGORIES.map(function(c){return '<span class="chip" style="cursor:default;">'+esc(c.name)+'</span>';}).join('');
+    app.innerHTML = '<div class="view-enter">'
+      + '<section class="hero"><div class="hero-mark">L</div>'
+      + '<h1>Ideias transformadas<br>em palavras.</h1>'
+      + '<p class="sub">Letrum é onde uma ideia solta vira um texto que faz sentido, e onde você descobre o que outras pessoas já pensaram sobre o mesmo assunto.</p>'
+      + '<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+      + '<a class="btn btn-primary" href="#/criar-conta">Criar conta grátis</a>'
+      + '<a class="btn btn-ghost" href="#/entrar">Já tenho conta</a>'
+      + '</div></section>'
+      + '<div class="landing-features">'
+      + '<div class="feature-card"><h3>Comece em segundos</h3><p>Sem configuração, sem fricção. Escreva um título, conte sua história, publique quando estiver pronto.</p></div>'
+      + '<div class="feature-card"><h3>Nove temas, um lugar só</h3><p>De tecnologia a relacionamentos, de finanças a cultura — encontre ou publique sobre o que realmente importa pra você.</p></div>'
+      + '<div class="feature-card"><h3>Você decide o ritmo</h3><p>Rascunho, agendamento ou publicação imediata. O mundo só vê quando você quiser.</p></div>'
+      + '</div>'
+      + '<div class="section-label">Temas por aqui</div>'
+      + '<div class="chips">'+catChips+'</div>'
+      + '<div class="landing-cta-band"><h2>Pronto pra transformar sua primeira ideia em palavras?</h2>'
+      + '<p>Leva menos de um minuto pra criar sua conta.</p>'
+      + '<a class="btn btn-primary" href="#/criar-conta">Criar conta grátis</a></div>'
+      + '</div>';
+  }
+
+  function renderFeedHome(){
     showLoading('Carregando histórias...');
     fetchFeed({categorySlug: state.activeCategory, query: state.query}).then(function(feed){
       return sidebarTemplate().then(function(sidebarHtml){ return {feed:feed, sidebarHtml:sidebarHtml}; });
@@ -511,9 +551,9 @@
         + '<div class="layout"><div><div class="feed">'+feedHtml+'</div></div>'+r.sidebarHtml+'</div></div>';
       var si = document.getElementById('searchInput'); if(si) si.value = state.query||'';
       Array.prototype.forEach.call(app.querySelectorAll('.chip[data-cat]'), function(chip){
-        chip.addEventListener('click', function(){ state.activeCategory = chip.getAttribute('data-cat')||null; renderHome(); });
+        chip.addEventListener('click', function(){ state.activeCategory = chip.getAttribute('data-cat')||null; renderFeedHome(); });
       });
-    }).catch(function(e){ showError('Não foi possível carregar o feed. '+e.message, renderHome); });
+    }).catch(function(e){ showError('Não foi possível carregar o feed. '+e.message, renderFeedHome); });
   }
 
   function renderArticle(slug){
