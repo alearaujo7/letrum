@@ -199,6 +199,8 @@
   .modal-overlay{position:fixed;inset:0;background:rgba(20,18,22,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
   .modal-card{background:var(--paper-raised);border-radius:var(--radius);padding:30px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-hover);}
   .modal-card h2{font-family:var(--font-display);font-weight:600;font-size:1.4rem;margin:0 0 6px;}
+  .schedule-toggle{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--ink-soft);margin:4px 0 16px;cursor:pointer;}
+  .schedule-toggle input{width:16px;height:16px;accent-color:var(--plum);flex-shrink:0;}
   .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap;}
   @media (max-width:640px){ .editor-cover-preview{margin-left:0;} }
 
@@ -797,7 +799,8 @@
       + '<div class="field"><label>Categoria</label><select class="tag-select" id="mCategory" style="width:100%;"><option value="">Sem categoria</option>'+catOptions+'</select></div>'
       + '<div class="field"><label>Tags (até 5, separadas por vírgula)</label><input class="tag-select" id="mTags" type="text" style="width:100%;" placeholder="ex: carreira, autoconhecimento"></div>'
       + '<div class="field"><label>Descrição curta (aparece no feed)</label><textarea class="tag-select" id="mDescription" style="width:100%;min-height:70px;font-family:var(--font-ui);font-size:.92rem;" maxlength="200">'+esc(draft.body.slice(0,140))+'</textarea></div>'
-      + '<div class="field"><label>Agendar publicação (opcional)</label><input class="tag-select" id="mSchedule" type="datetime-local" style="width:100%;"></div>'
+      + '<label class="schedule-toggle"><input type="checkbox" id="mScheduleToggle"> Agendar para mais tarde, em vez de publicar agora</label>'
+      + '<div class="field" id="mScheduleField" style="display:none;"><label>Data e hora da publicação</label><input class="tag-select" id="mSchedule" type="datetime-local" style="width:100%;"></div>'
       + '<div class="modal-actions"><button class="btn btn-ghost" type="button" id="mCancel">Cancelar</button>'
       + '<button class="btn btn-primary" type="button" id="mConfirm">Publicar agora</button></div>'
       + '</div>';
@@ -806,15 +809,26 @@
     overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
     document.getElementById('mCancel').addEventListener('click', function(){ overlay.remove(); });
 
-    document.getElementById('mConfirm').addEventListener('click', function(){
-      var btn = this; btn.disabled = true; var original = btn.textContent; btn.textContent = 'Publicando...';
+    var scheduleToggle = document.getElementById('mScheduleToggle');
+    var scheduleField = document.getElementById('mScheduleField');
+    var confirmBtn = document.getElementById('mConfirm');
+    scheduleToggle.addEventListener('change', function(){
+      scheduleField.style.display = this.checked ? 'block' : 'none';
+      confirmBtn.textContent = this.checked ? 'Agendar publicação' : 'Publicar agora';
+    });
+
+    confirmBtn.addEventListener('click', function(){
+      var wantsSchedule = scheduleToggle.checked;
       var scheduleVal = document.getElementById('mSchedule').value;
       var status = 'published';
       var scheduledAt = null;
-      if(scheduleVal){
+      if(wantsSchedule){
+        if(!scheduleVal){ showToast('Escolha a data e a hora da publicação'); return; }
         var d = new Date(scheduleVal);
-        if(d.getTime() > Date.now()){ status = 'scheduled'; scheduledAt = d.toISOString(); }
+        if(d.getTime() <= Date.now()){ showToast('Escolha um horário no futuro'); return; }
+        status = 'scheduled'; scheduledAt = d.toISOString();
       }
+      var btn = this; btn.disabled = true; var original = btn.textContent; btn.textContent = wantsSchedule ? 'Agendando...' : 'Publicando...';
       var tagNames = document.getElementById('mTags').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
       createArticle({
         title: draft.title, subtitle: '', description: document.getElementById('mDescription').value.trim(),
