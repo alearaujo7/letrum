@@ -476,13 +476,16 @@
 
   function sidebarTemplate(){
     return restRequest('/rest/v1/profiles?select=id,username,full_name,avatar_url&order=created_at.asc&limit=6', {useAuth:false}).catch(function(){return [];}).then(function(authors){
-      var rows = authors.map(function(a){
-        return '<a class="author-row" href="#/perfil/'+encodeURIComponent(a.username)+'">'+authorAvatar(a)
-          + '<div><div class="name">'+esc(a.full_name||a.username)+'</div><div class="count">@'+esc(a.username)+'</div></div></a>';
-      }).join('');
+      var authorsCard = '';
+      if(authors.length){
+        var rows = authors.map(function(a){
+          return '<a class="author-row" href="#/perfil/'+encodeURIComponent(a.username)+'">'+authorAvatar(a)
+            + '<div><div class="name">'+esc(a.full_name||a.username)+'</div><div class="count">@'+esc(a.username)+'</div></div></a>';
+        }).join('');
+        authorsCard = '<div class="sidebar-card"><div class="section-label" style="margin-bottom:14px;">Quem escreve por aqui</div>'+rows+'</div>';
+      }
       return '<aside>'
-        + '<div class="sidebar-card"><div class="section-label" style="margin-bottom:14px;">Quem escreve por aqui</div>'
-        + (rows || '<p style="color:var(--ink-faint);font-size:.85rem;">Ainda não há autores.</p>') + '</div>'
+        + authorsCard
         + '<div class="cta-card"><span class="brand-mark">L</span><h3>Tem uma ideia pra transformar em palavras?</h3>'
         + '<p>Toda ideia solta merece virar um texto bem escrito. Este é o lugar pra começar.</p>'
         + '<a class="btn btn-primary" href="#/escrever">Começar a escrever</a></div></aside>';
@@ -498,7 +501,7 @@
       var chips = '<button class="chip'+(!state.activeCategory?' active':'')+'" data-cat="">Todas</button>'
         + CATEGORIES.map(function(c){ return '<button class="chip'+(state.activeCategory===c.slug?' active':'')+'" data-cat="'+esc(c.slug)+'">'+esc(c.name)+'</button>'; }).join('');
       var feedHtml = r.feed.length ? r.feed.map(cardTemplate).join('') :
-        '<div class="empty-state">'+(state.query ? 'Nenhuma história encontrada para "'+esc(state.query)+'".' : 'Ainda não há histórias publicadas nessa categoria.')+'</div>';
+        '<div class="empty-state">'+(state.query ? 'Nenhuma história encontrada para "'+esc(state.query)+'".' : state.activeCategory ? 'Ainda não há histórias publicadas nessa categoria.' : 'Ainda não há histórias por aqui. Seja a primeira pessoa a escrever uma.')+'</div>';
       app.innerHTML = '<div class="view-enter">'
         + '<section class="hero"><div class="hero-mark">L</div>'
         + '<h1>Ideias transformadas<br>em palavras.</h1>'
